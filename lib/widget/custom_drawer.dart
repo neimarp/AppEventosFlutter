@@ -35,7 +35,7 @@ class CustomDrawer extends StatelessWidget {
                     Positioned(
                       top: 20.0,
                       left: 0.0,
-                      child: Text("Lojinha",
+                      child: Text("EventApp",
                           style: TextStyle(
                               fontSize: 34.0, fontWeight: FontWeight.bold)),
                     ),

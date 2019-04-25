@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:transparent_image/transparent_image.dart';
+import 'package:loja/widget/custom_drawer.dart';
 
 class HomeTab extends StatefulWidget {
   HomeTab();
@@ -10,6 +8,7 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
+    
   Firestore _firestore = Firestore.instance;
   List<DocumentSnapshot> _eventos = [];
   bool _loadingEventos = true;
@@ -94,6 +93,7 @@ class _HomeTabState extends State<HomeTab> {
         title: Text("Eventos"),
         centerTitle: true,
       ),
+      drawer: Drawer(child: Container(),),
       body: _loadingEventos == true
           ? Center(child: CircularProgressIndicator())
           : Container(
