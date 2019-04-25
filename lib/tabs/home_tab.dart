@@ -95,7 +95,7 @@ class _HomeTabState extends State<HomeTab> {
         centerTitle: true,
       ),
       body: _loadingEventos == true
-          ? Center(child: Text("Carregando ..."))
+          ? Center(child: CircularProgressIndicator())
           : Container(
               child: _eventos.length == 0
                   ? Center(child: Text("Sem eventos no momento!"))
