@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1063576948941",
+    "firebase_url": "https://loja-ceb28.firebaseio.com",
+    "project_id": "loja-ceb28",
+    "storage_bucket": "loja-ceb28.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1063576948941:android:f7b0ef19905abda7",
+        "android_client_info": {
+          "package_name": "com.example.loja"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1063576948941-m8k0oa51aalva4i50gef02vrvsmbrer0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGTpFf-gKIpZJAUI1jiKSqRBk7OyU9n78"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
