@@ -161,14 +161,17 @@ class _HomeTabState extends State<HomeTab> {
                                         Container(
                                           alignment: Alignment.bottomLeft,
                                           height: MediaQuery.of(context).size.width * 0.075,                                          
-                                          child: Text(_eventos[index].data["nome"],
-                                            maxLines: 1, 
-                                            overflow: TextOverflow.ellipsis,
-                                            style:TextStyle(
-                                                    color: Colors.green,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: MediaQuery.of(context).size.width * 0.06
-                                                  )
+                                          child: Padding(
+                                            padding: EdgeInsets.only(top:MediaQuery.of(context).size.width * 0.013),
+                                            child: Text(_eventos[index].data["nome"],
+                                              maxLines: 1, 
+                                              overflow: TextOverflow.ellipsis,
+                                              style:TextStyle(
+                                                      color: Colors.green,
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: MediaQuery.of(context).size.width * 0.06
+                                                    )
+                                            ),
                                           ),
                                         ),
 

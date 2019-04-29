@@ -13,7 +13,7 @@ class IconTile extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 3),
+            padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.01),
             child: Container(
               height: MediaQuery.of(context).size.width * 0.0423,
               child: Center(
@@ -23,7 +23,7 @@ class IconTile extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 3),
+            padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.01),
             child: Container(
                 height: MediaQuery.of(context).size.width * 0.0423,
                 child:
