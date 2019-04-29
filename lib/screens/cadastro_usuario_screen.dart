@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:masked_text/masked_text.dart';
 
@@ -8,10 +9,34 @@ class CadastroUsuarioScreen extends StatefulWidget {
 }
 
 class _CadastroUsuarioScreenState extends State<CadastroUsuarioScreen> {
+  
+  final _formKey = GlobalKey<FormState>();
+  final db = Firestore.instance;
+
   List<String> _sexo = ['Masculino', 'Feminino'];
-  String _sexoSelecionado;
+
   final _textCPFController = new TextEditingController();
   final _textCellController = new TextEditingController();
+
+  bool _validaCpf = false;
+  bool _validaCell = false;
+
+  String _idSave;
+
+  String _nome;
+  String _email;
+  String _cpf;
+  String _celular;
+  String _sexoSelecionado;
+  
+  void createData() async {
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+      DocumentReference ref = await db.collection('usuarios').add({'nome': '$_nome','celular': '$_celular','email': '$_email','cpf': '$_cpf','sexo': _sexoSelecionado == "Masculino" ? 'H' : 'M'});
+      setState(() => _idSave = ref.documentID);
+      print(ref.documentID);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,15 +46,32 @@ class _CadastroUsuarioScreenState extends State<CadastroUsuarioScreen> {
         title: Text("Cadastro Usuário"),
         centerTitle: true,
         actions: <Widget>[
-          IconButton(icon: const Icon(Icons.save), onPressed: () {})
+          IconButton(
+            icon: const Icon(Icons.save), 
+            onPressed: (){
+              if (_cpf.length != 14) {
+                setState(() {
+                  _validaCpf = true ;
+                });
+              }else if(_celular.length != 15){
+                setState(() {
+                  _validaCell = true ;
+                });
+              }
+              else{
+                createData();
+              }
+
+            }
+          )
         ],
       ),
       
       body: SingleChildScrollView(
         child: Form(
+          key: _formKey,
           child: Column(
             children: <Widget>[
-
 
               Container(
                 padding: EdgeInsets.fromLTRB(
@@ -50,6 +92,7 @@ class _CadastroUsuarioScreenState extends State<CadastroUsuarioScreen> {
                       return 'Digite no máximo 50 caracteres!';
                     }
                   },
+                  onSaved: (value) => _nome = value,
                 ),
               ),
 
@@ -70,8 +113,11 @@ class _CadastroUsuarioScreenState extends State<CadastroUsuarioScreen> {
                   validator: (value) {
                     if (!value.contains("@")) {
                       return 'Email inválido';
+                    }else if(value.isEmpty){
+                      return 'Digite um Email!';
                     }
                   },
+                  onSaved: (value) => _email = value,
                 ),
               ),
 
@@ -92,6 +138,7 @@ class _CadastroUsuarioScreenState extends State<CadastroUsuarioScreen> {
                       maxLength: 14,
                       keyboardType: TextInputType.number,
                       inputDecoration: InputDecoration(
+                        errorText: _validaCpf ? 'CPF inválido' : null,
                         counterText: "",
                         counterStyle: TextStyle(fontSize: 0),
                         border: OutlineInputBorder(),
@@ -99,6 +146,11 @@ class _CadastroUsuarioScreenState extends State<CadastroUsuarioScreen> {
                         labelText: "CPF",
                         contentPadding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.035,horizontal: MediaQuery.of(context).size.width * 0.02),
                       ),
+                      onChange: (value) {
+                        setState(() {
+                          _cpf = value;
+                        });
+                      },
                     ),
                   ),
 
@@ -116,6 +168,7 @@ class _CadastroUsuarioScreenState extends State<CadastroUsuarioScreen> {
                       maxLength: 15,
                       keyboardType: TextInputType.number,
                       inputDecoration: InputDecoration(
+                        errorText: _validaCell ? 'Celular inválido' : null,
                         counterText: "",
                         counterStyle: TextStyle(fontSize: 0),
                         border: OutlineInputBorder(),
@@ -123,13 +176,16 @@ class _CadastroUsuarioScreenState extends State<CadastroUsuarioScreen> {
                         labelText: "Celular",
                         contentPadding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.035,horizontal: MediaQuery.of(context).size.width * 0.02),
                       ),
+                      onChange: (value) {
+                        setState(() {
+                          _celular = value;
+                        });
+                      },
                     ),
                   ),
 
                 ],
               ),
-
-                            
 
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -163,10 +219,6 @@ class _CadastroUsuarioScreenState extends State<CadastroUsuarioScreen> {
                       }).toList(),
                     ),
                   ),
-
-                  
-
-
                 ],
               ),
             ],
