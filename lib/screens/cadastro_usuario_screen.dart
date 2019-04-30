@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:masked_text/masked_text.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 import 'dart:io';
 
 class CadastroUsuarioScreen extends StatefulWidget {
@@ -13,17 +15,18 @@ class CadastroUsuarioScreen extends StatefulWidget {
 class _CadastroUsuarioScreenState extends State<CadastroUsuarioScreen> {
   
   final _formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   final db = Firestore.instance;
+  final storage = FirebaseStorage.instance;
 
   List<String> _sexo = ['Masculino', 'Feminino'];
 
-  final _textCPFController = new TextEditingController();
-  final _textCellController = new TextEditingController();
-  final _textDataController = new TextEditingController();
+  var _cpfController = new MaskedTextController(text: '',mask: '000.000.000-00');
+  var _dataController = new MaskedTextController(text: '',mask: '00/00/0000');
+  var _celularController = new MaskedTextController(text: '',mask: '(00) 00000-0000');
 
-  bool _validaCpf = false;
-  bool _validaCell = false;
-  bool _validaData = false;
+  bool _isLoading = false;
+  double _progress;
 
   String _idSave;
 
@@ -38,10 +41,46 @@ class _CadastroUsuarioScreenState extends State<CadastroUsuarioScreen> {
   void createData() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      DocumentReference ref = await db.collection('usuarios').add({'nome': '$_nome','celular': '$_celular','email': '$_email','cpf': '$_cpf','sexo': _sexoSelecionado == "Masculino" ? 'H' : 'M', 'dtNascimento':'$_dataNascimento'});
-      setState(() => _idSave = ref.documentID);
-      print(ref.documentID);
+      _isLoading = true;
+      DocumentReference ref = await db.collection('usuarios')
+                              .add({'imagem': await _pickSaveImage(),'nome': '$_nome',
+                                    'celular': '$_celular','email': '$_email',
+                                    'cpf': '$_cpf','sexo': _sexoSelecionado == "Masculino" ? 'H' : 'M', 
+                                    'dtNascimento':'$_dataNascimento'})
+                              .then(
+                                (_) { 
+                                  _idSave = _.documentID;
+                                  print(_.documentID);
+                                  setState(() { _isLoading = false;}); 
+                                })
+                              .catchError((e){
+                                _scaffoldKey.currentState.showSnackBar(
+                                  SnackBar(content: Text("Falha ao criar usuário!"),
+                                    backgroundColor: Colors.red,
+                                    duration: Duration(seconds: 3)
+                                  )
+                                );
+                                _isLoading = false;
+                              });
+
     }
+  }
+
+  Future<String> _pickSaveImage() async {
+    StorageReference ref = storage.ref().child(DateTime.now().millisecondsSinceEpoch.toString());
+    StorageUploadTask uploadTask = ref.putFile(_imagem);
+    uploadTask.events.listen((event) {
+          setState(() {
+            _progress = event.snapshot.bytesTransferred.toDouble() / event.snapshot.totalByteCount.toDouble();
+          });
+        }).onError((error) {
+          setState(() {
+            _isLoading = false;
+          });
+          _scaffoldKey.currentState.showSnackBar(new SnackBar(content: new Text(error.toString()), backgroundColor: Colors.red, duration: Duration(seconds: 3),) );
+        });
+
+    return await (await uploadTask.onComplete).ref.getDownloadURL();
   }
 
   Future getImage() async {
@@ -55,7 +94,7 @@ class _CadastroUsuarioScreenState extends State<CadastroUsuarioScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text("Cadastro Usuário"),
         centerTitle: true,
@@ -63,20 +102,7 @@ class _CadastroUsuarioScreenState extends State<CadastroUsuarioScreen> {
           IconButton(
             icon: const Icon(Icons.save), 
             onPressed: (){
-              print(_cpf.length);
-              if (_cpf == null || _cpf.length != 14) {                
-                setState(() {
-                  _validaCpf = true ;
-                });
-              }else if(_celular == null || _celular.length != 15){
-                setState(() {
-                  _validaCell = true ;
-                });
-              }else if(_dataNascimento == null || _dataNascimento.length != 10){
-                setState(() {
-                  _validaData = true ;
-                });
-              }else if(_imagem == null){
+              if(_imagem == null){
                 showDialog(
                   context: context, 
                   builder: (context){
@@ -87,7 +113,11 @@ class _CadastroUsuarioScreenState extends State<CadastroUsuarioScreen> {
                         FlatButton(
                           child: Text("Ok"),
                           onPressed: (){
-                            createData();
+                            if (_formKey.currentState.validate() == false) {
+                              Navigator.pop(context);
+                            }else{
+                              createData();
+                            }
                           },
                         ),
                         FlatButton(
@@ -110,7 +140,24 @@ class _CadastroUsuarioScreenState extends State<CadastroUsuarioScreen> {
       ),
       
       body: SingleChildScrollView(
-        child: Form(
+        child: _isLoading 
+        ? Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.height*0.1),
+                padding: EdgeInsets.only(top: MediaQuery.of(context).size.height*0.25),
+                child: Text("Carregando ...", style: TextStyle(fontSize: 30.0,fontWeight: FontWeight.bold)),
+              ),
+              Container(
+                child: CircularProgressIndicator()
+              ),
+            ],
+          )
+        ) 
+        : Form(
           key: _formKey,
           child: Column(
             children: <Widget>[
@@ -188,6 +235,8 @@ class _CadastroUsuarioScreenState extends State<CadastroUsuarioScreen> {
                   validator: (value) {
                     if (value.length > 50) {
                       return 'Digite no máximo 50 caracteres!';
+                    }else if(value.isEmpty){
+                      return 'Digite seu Nome!';
                     }
                   },
                   onSaved: (value) => _nome = value,
@@ -224,61 +273,61 @@ class _CadastroUsuarioScreenState extends State<CadastroUsuarioScreen> {
                   
                   Container(
                     width: MediaQuery.of(context).size.width * 0.5,
+                    
                     padding: EdgeInsets.fromLTRB(
                         MediaQuery.of(context).size.width * 0.01,
                         MediaQuery.of(context).size.width * 0.03,
                         MediaQuery.of(context).size.width * 0.01,
                         MediaQuery.of(context).size.width * 0.02),
-                    child: MaskedTextField(
-                      maskedTextFieldController: _textCPFController,
-                      escapeCharacter: '#',
-                      mask: "###.###.###-##",
+                    child: TextFormField(
+                      controller: _cpfController,
                       maxLength: 14,
                       keyboardType: TextInputType.number,
-                      inputDecoration: InputDecoration(
-                        errorText: _validaCpf ? 'CPF inválido' : null,
+                      decoration: InputDecoration(
                         counterText: "",
                         counterStyle: TextStyle(fontSize: 0),
                         border: OutlineInputBorder(),
-                        hintText: "Digite seu CPF", 
-                        labelText: "CPF",
+                        hintText: "CPF",
                         contentPadding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.035,horizontal: MediaQuery.of(context).size.width * 0.02),
                       ),
-                      onChange: (value) {
-                        setState(() {
-                          _cpf = value;
-                        });
+                      validator: (value) {
+                        if (value.length < 14) {
+                          return 'CPF inválido';
+                        }else if(value.isEmpty){
+                          return 'Digite um CPF!';
+                        }
                       },
+                      onSaved: (value) => _cpf = value,
                     ),
                   ),
 
                   Container(
                     width: MediaQuery.of(context).size.width * 0.5,
+                    
                     padding: EdgeInsets.fromLTRB(
                         MediaQuery.of(context).size.width * 0.01,
                         MediaQuery.of(context).size.width * 0.03,
                         MediaQuery.of(context).size.width * 0.01,
                         MediaQuery.of(context).size.width * 0.02),
-                    child: MaskedTextField(
-                      maskedTextFieldController: _textCellController,
-                      escapeCharacter: '#',
-                      mask: "(##) #####-####",
+                    child: TextFormField(
+                      controller: _celularController,
                       maxLength: 15,
                       keyboardType: TextInputType.number,
-                      inputDecoration: InputDecoration(
-                        errorText: _validaCell ? 'Celular inválido' : null,
+                      decoration: InputDecoration(
                         counterText: "",
                         counterStyle: TextStyle(fontSize: 0),
                         border: OutlineInputBorder(),
-                        hintText: "Digite seu Celular", 
-                        labelText: "Celular",
+                        hintText: "Celular",
                         contentPadding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.035,horizontal: MediaQuery.of(context).size.width * 0.02),
                       ),
-                      onChange: (value) {
-                        setState(() {
-                          _celular = value;
-                        });
+                      validator: (value) {
+                        if (value.length < 14) {
+                          return 'Celular inválido';
+                        }else if(value.isEmpty){
+                          return 'Digite um Celular!';
+                        }
                       },
+                      onSaved: (value) => _celular = value,
                     ),
                   ),
 
@@ -297,11 +346,16 @@ class _CadastroUsuarioScreenState extends State<CadastroUsuarioScreen> {
                         MediaQuery.of(context).size.width * 0.01,
                         MediaQuery.of(context).size.width * 0.02),
                     child: DropdownButtonFormField(
+                      validator: (value){
+                        if (value != "Masculino" && value != "Feminino") {
+                          return 'Selecione o Sexo';
+                        }
+                      },
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: "Sexo",
                         hintText: "Selecione o Sexo",
-                        contentPadding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.035,horizontal: MediaQuery.of(context).size.width * 0.02),
+                        contentPadding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.03,horizontal: MediaQuery.of(context).size.width * 0.02),
                       ),                      
                       value: _sexoSelecionado,
                       onChanged: (newValue) {
@@ -320,35 +374,34 @@ class _CadastroUsuarioScreenState extends State<CadastroUsuarioScreen> {
 
                   Container(
                     width: MediaQuery.of(context).size.width * 0.5,
+                    
                     padding: EdgeInsets.fromLTRB(
                         MediaQuery.of(context).size.width * 0.01,
                         MediaQuery.of(context).size.width * 0.03,
                         MediaQuery.of(context).size.width * 0.01,
                         MediaQuery.of(context).size.width * 0.02),
-                    child: MaskedTextField(
-                      maskedTextFieldController: _textDataController,
-                      escapeCharacter: 'x',
-                      mask: "xx/xx/xxxx",
+                    child: TextFormField(
+                      controller: _dataController,
                       maxLength: 10,
                       keyboardType: TextInputType.number,
-                      inputDecoration: InputDecoration(
-                        errorText: _validaData ? 'Data de Nascimento inválida' : null,
+                      decoration: InputDecoration(
                         counterText: "",
                         counterStyle: TextStyle(fontSize: 0),
                         border: OutlineInputBorder(),
-                        hintText: "Digite sua Data de Nascimento", 
-                        labelText: "Data de Nascimento",
+                        hintText: "Data de Nascimento",
                         contentPadding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.035,horizontal: MediaQuery.of(context).size.width * 0.02),
                       ),
-                      onChange: (value) {
-                        setState(() {
-                          _dataNascimento = value;
-                        });
+                      validator: (value) {
+                        if (value.length < 10) {
+                          return 'Data de Nascimento inválida';
+                        }else if(value.isEmpty){
+                          return 'Digite sua Data de Nascimento!';
+                        }
                       },
+                      onSaved: (value) => _dataNascimento = value,
                     ),
                   ),
-
-
+                  
                 ],
               ),
             ],
