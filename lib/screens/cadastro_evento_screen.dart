@@ -35,9 +35,12 @@ class _CadastroEventoScreenState extends State<CadastroEventoScreen> {
 
   File _imagem;
   String _nome;
+  String _maxParticipantes;
+  String _minParticipantes;
   String _descricao;
   String _hora;
   String _sexoSelecionado;
+  String _esporte;
   String _pagoSelecionado;
   String _estacionamentoSelecionado;
   String _dataEvento;
@@ -51,14 +54,16 @@ class _CadastroEventoScreenState extends State<CadastroEventoScreen> {
                                     'descricao': '$_descricao','hora': '$_hora',
                                     'sexo': _sexoSelecionado == "Masculino" ? 'H' : _sexoSelecionado == "Feminino" ? 'M' : 'U', 
                                     'pago':'$_pagoSelect', 'estacionamento':'$_estacionamentoSelect',
-                                    'data':'$_dataEvento'})
-                              .then(
+                                    'data':'$_dataEvento', 'minParticipantes':'$_minParticipantes',
+                                    'maxParticipantes':'$_maxParticipantes', 'esporte':'$_esporte',
+                             
+                             }).then(
                                 (_) { 
                                   _idSave = _.documentID;
                                   print(_.documentID);
                                   setState(() { _isLoading = false;}); 
-                                })
-                              .catchError((e){
+                              
+                              }).catchError((e){
                                 _scaffoldKey.currentState.showSnackBar(
                                   SnackBar(content: Text("Falha ao criar evento!"),
                                     backgroundColor: Colors.red,
@@ -316,39 +321,133 @@ class _CadastroEventoScreenState extends State<CadastroEventoScreen> {
                 ],
               ),
 
-              Container(
-                width: MediaQuery.of(context).size.width * 0.5,
-                padding: EdgeInsets.fromLTRB(
-                    MediaQuery.of(context).size.width * 0.01,
-                    MediaQuery.of(context).size.width * 0.03,
-                    MediaQuery.of(context).size.width * 0.01,
-                    MediaQuery.of(context).size.width * 0.02),
-                child: DropdownButtonFormField(
-                  validator: (value){
-                    if (value != "Masculino" && value != "Feminino" && value != "Unissex") {
-                      return 'Selecione o Sexo';
-                    }
-                  },
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "Sexo",
-                    hintText: "Selecione o Sexo",
-                    contentPadding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.03,horizontal: MediaQuery.of(context).size.width * 0.02),
-                  ),                      
-                  value: _sexoSelecionado,
-                  onChanged: (newValue) {
-                    setState(() {
-                      _sexoSelecionado = newValue;
-                    });
-                  },
-                  items: _sexo.map((sexo) {
-                    return DropdownMenuItem(
-                      child: Text(sexo),
-                      value: sexo,
-                    );
-                  }).toList(),
-                ),
+              Row(
+                children: <Widget>[
+                
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.5,
+
+                    padding: EdgeInsets.fromLTRB(
+                        MediaQuery.of(context).size.width * 0.01,
+                        MediaQuery.of(context).size.width * 0.03,
+                        MediaQuery.of(context).size.width * 0.01,
+                        MediaQuery.of(context).size.width * 0.02),
+                    child: TextFormField(
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        counterText: "",
+                        counterStyle: TextStyle(fontSize: 0),
+                        border: OutlineInputBorder(),
+                        hintText: "Nº Min Participantes",
+                        labelText: "Nº Min Participantes",
+                        contentPadding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.035,horizontal: MediaQuery.of(context).size.width * 0.02),
+                      ),
+                      validator: (value) {
+                        if (value.length >= 50) {
+                          return 'Digite no máximo 50 caracteres!';
+                        }else if(value.isEmpty){
+                          return 'Digite o Nome do Evento!';
+                        }
+                      },
+                      onSaved: (value) => _minParticipantes = value,
+                    ),
+                  ),
+
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.5,
+
+                    padding: EdgeInsets.fromLTRB(
+                        MediaQuery.of(context).size.width * 0.01,
+                        MediaQuery.of(context).size.width * 0.03,
+                        MediaQuery.of(context).size.width * 0.01,
+                        MediaQuery.of(context).size.width * 0.02),
+                    child: TextFormField(
+                      keyboardType: TextInputType.number,
+                      maxLength: 8,
+                      decoration: InputDecoration(
+                        counterText: "",
+                        counterStyle: TextStyle(fontSize: 0),
+                        border: OutlineInputBorder(),
+                        hintText: "Nº Max Participantes",
+                        labelText: "Nº Max Participantes",
+                        contentPadding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.035,horizontal: MediaQuery.of(context).size.width * 0.02),
+                      ),
+                      onSaved: (value) => _maxParticipantes = value,
+                    ),
+                  ),
+
+                ],
               ),
+
+              Row(
+                children: <Widget>[
+
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.5,
+                    padding: EdgeInsets.fromLTRB(
+                        MediaQuery.of(context).size.width * 0.01,
+                        MediaQuery.of(context).size.width * 0.03,
+                        MediaQuery.of(context).size.width * 0.01,
+                        MediaQuery.of(context).size.width * 0.02),
+                    child: DropdownButtonFormField(
+                      validator: (value){
+                        if (value != "Masculino" && value != "Feminino" && value != "Unissex") {
+                          return 'Selecione o Sexo';
+                        }
+                      },
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: "Sexo",
+                        hintText: "Selecione o Sexo",
+                        contentPadding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.03,horizontal: MediaQuery.of(context).size.width * 0.02),
+                      ),                      
+                      value: _sexoSelecionado,
+                      onChanged: (newValue) {
+                        setState(() {
+                          _sexoSelecionado = newValue;
+                        });
+                      },
+                      items: _sexo.map((sexo) {
+                        return DropdownMenuItem(
+                          child: Text(sexo),
+                          value: sexo,
+                        );
+                      }).toList(),
+                    ),
+                  ),
+
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.5,
+
+                    padding: EdgeInsets.fromLTRB(
+                        MediaQuery.of(context).size.width * 0.01,
+                        MediaQuery.of(context).size.width * 0.03,
+                        MediaQuery.of(context).size.width * 0.01,
+                        MediaQuery.of(context).size.width * 0.02),
+                    child: TextFormField(
+                      keyboardType: TextInputType.text,
+                      //maxLength: 8,
+                      decoration: InputDecoration(
+                        counterText: "",
+                        counterStyle: TextStyle(fontSize: 0),
+                        border: OutlineInputBorder(),
+                        hintText: "Esporte",
+                        labelText: "Esporte",
+                        contentPadding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.035,horizontal: MediaQuery.of(context).size.width * 0.02),
+                      ),
+                      validator: (value){
+                        if (value.isEmpty) {
+                          return 'Digite o Esporte!';
+                        }
+                      },
+                      onSaved: (value) => _esporte = value,
+                    ),
+                  ),
+
+                ],
+              ),
+
+              
               
               // Row(
               //   children: <Widget>[
@@ -571,7 +670,7 @@ class _CadastroEventoScreenState extends State<CadastroEventoScreen> {
                     MediaQuery.of(context).size.width * 0.01,
                     MediaQuery.of(context).size.width * 0.02),
                 child: TextFormField(
-                  maxLines: 5,
+                  maxLines: 4,
                   keyboardType: TextInputType.text,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
