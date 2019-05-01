@@ -573,7 +573,7 @@ class _CadastroEventoScreenState extends State<CadastroEventoScreen> {
                                 style: TextStyle(fontSize: 14.0),
                               ),
                               Radio(
-                                activeColor: Colors.green,
+                                activeColor: Colors.red,
                                 value: 'n',
                                 groupValue: _estacionamentoSelect,
                                 onChanged: (newValue) {
@@ -641,7 +641,7 @@ class _CadastroEventoScreenState extends State<CadastroEventoScreen> {
                                 style: TextStyle(fontSize: 14.0),
                               ),
                               Radio(
-                                activeColor: Colors.green,
+                                activeColor: Colors.red,
                                 value: 'n',
                                 groupValue: _pagoSelect,
                                 onChanged: (newValue) {
