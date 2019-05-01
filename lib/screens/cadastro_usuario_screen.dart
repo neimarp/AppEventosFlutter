@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 import 'dart:io';
 
 class CadastroUsuarioScreen extends StatefulWidget {
@@ -108,7 +107,7 @@ class _CadastroUsuarioScreenState extends State<CadastroUsuarioScreen> {
                   builder: (context){
                     return AlertDialog(
                       title: Text("Imagem"),
-                      content: Text("Imagem do Evento não foi selecionada!"),
+                      content: Text("Imagem do Usuário não foi selecionada!"),
                       actions: <Widget>[
                         FlatButton(
                           child: Text("Ok"),
@@ -287,6 +286,7 @@ class _CadastroUsuarioScreenState extends State<CadastroUsuarioScreen> {
                         counterText: "",
                         counterStyle: TextStyle(fontSize: 0),
                         border: OutlineInputBorder(),
+                        labelText: "Cpf",
                         hintText: "CPF",
                         contentPadding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.035,horizontal: MediaQuery.of(context).size.width * 0.02),
                       ),
@@ -317,6 +317,7 @@ class _CadastroUsuarioScreenState extends State<CadastroUsuarioScreen> {
                         counterText: "",
                         counterStyle: TextStyle(fontSize: 0),
                         border: OutlineInputBorder(),
+                        labelText: "Celular",
                         hintText: "Celular",
                         contentPadding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.035,horizontal: MediaQuery.of(context).size.width * 0.02),
                       ),
@@ -388,6 +389,7 @@ class _CadastroUsuarioScreenState extends State<CadastroUsuarioScreen> {
                         counterText: "",
                         counterStyle: TextStyle(fontSize: 0),
                         border: OutlineInputBorder(),
+                        labelText: "Data Nascimento",
                         hintText: "Data de Nascimento",
                         contentPadding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width * 0.035,horizontal: MediaQuery.of(context).size.width * 0.02),
                       ),
