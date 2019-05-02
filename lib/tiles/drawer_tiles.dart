@@ -18,6 +18,13 @@ class DrawerTile extends StatelessWidget {
           controller.jumpToPage(page);
         },
         child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+                colors: controller.page.round() == page ? [Colors.green, Colors.green[300]] : [Colors.transparent,Colors.transparent],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight
+            )
+          ),
           padding: EdgeInsets.only(left: 16.0),
           height: 60.0,
           child: Row(
@@ -25,16 +32,14 @@ class DrawerTile extends StatelessWidget {
               Icon(
                 icon,
                 size: 32.0,
-                color: controller.page.round() == page ? 
-                  Theme.of(context).primaryColor : Colors.grey[700],
+                color: Colors.white,
               ),
               SizedBox(width: 32.0),
               Text(
                 text,
                 style:TextStyle(
-                  fontSize: 16.0,
-                  color: controller.page.round() == page ? 
-                          Theme.of(context).primaryColor : Colors.grey[700]
+                  fontSize: 16.0, 
+                  color: Colors.white
                 )
               )
             ],

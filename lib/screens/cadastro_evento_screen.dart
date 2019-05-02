@@ -104,51 +104,7 @@ class _CadastroEventoScreenState extends State<CadastroEventoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        title: Text("Cadastro Evento"),
-        centerTitle: true,
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.save), 
-            onPressed: (){
-              if(_imagem == null){
-                showDialog(
-                  context: context, 
-                  builder: (context){
-                    return AlertDialog(
-                      title: Text("Imagem"),
-                      content: Text("Imagem do Evento não foi selecionada!"),
-                      actions: <Widget>[
-                        FlatButton(
-                          child: Text("Ok"),
-                          onPressed: (){
-                            if (_formKey.currentState.validate() == false) {
-                              Navigator.pop(context);
-                            }else{
-                              createData();
-                            }
-                          },
-                        ),
-                        FlatButton(
-                          child: Text("Cancelar"),
-                          onPressed: (){
-                            Navigator.pop(context);
-                          },
-                        )
-                      ],
-                    );
-                  }
-                );
-              }
-              else{
-                createData();
-              }
-            }
-          )
-        ],
-      ),
-      
+      key: _scaffoldKey,           
       body: SingleChildScrollView(
         child: _isLoading 
         ? Container(
@@ -182,9 +138,9 @@ class _CadastroEventoScreenState extends State<CadastroEventoScreen> {
                 height: MediaQuery.of(context).size.width * 0.48,
                 margin: EdgeInsets.fromLTRB(
                     MediaQuery.of(context).size.width * 0.15,
-                    MediaQuery.of(context).size.width * 0.05,
+                    MediaQuery.of(context).size.width * 0.00,
                     MediaQuery.of(context).size.width * 0.15,
-                    MediaQuery.of(context).size.width * 0.05),
+                    MediaQuery.of(context).size.width * 0.0),
                     
                 child: Container(
 
@@ -688,6 +644,86 @@ class _CadastroEventoScreenState extends State<CadastroEventoScreen> {
                   onSaved: (value) => _descricao = value,
                 ),
               ),
+
+              InkWell(
+                child: Container(
+                  alignment: Alignment.center,
+                  width: MediaQuery.of(context).size.width * 0.6,
+                  height: MediaQuery.of(context).size.width * 0.1,
+
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.green,
+                      width: 2.0,
+                      style: BorderStyle.solid
+                    ),
+                    color: Colors.green,
+                    borderRadius: BorderRadius.all(Radius.circular(15))
+                  ),
+
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+
+                      IconButton(
+                        padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.001),
+                        icon: Icon(Icons.save,color: Colors.white,size: MediaQuery.of(context).size.width * 0.07,), 
+                        onPressed: (){
+                          if(_imagem == null){
+                            showDialog(
+                              context: context, 
+                              builder: (context){
+                                return AlertDialog(
+                                  title: Text("Imagem"),
+                                  content: Text("Imagem do Evento não foi selecionada!"),
+                                  actions: <Widget>[
+                                    FlatButton(
+                                      child: Text("Ok"),
+                                      onPressed: (){
+                                        if (_formKey.currentState.validate() == false) {
+                                          Navigator.pop(context);
+                                        }else{
+                                          createData();
+                                        }
+                                      },
+                                    ),
+                                    FlatButton(
+                                      child: Text("Cancelar"),
+                                      onPressed: (){
+                                        Navigator.pop(context);
+                                      },
+                                    )
+                                  ],
+                                );
+                              }
+                            );
+                          }
+                          else{
+                            createData();
+                          }
+                        }
+                      ),
+
+                      Container(
+                        child: Text(
+                          "Salvar",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontSize: 20
+                          ),
+                        ),
+                      )
+
+
+                    ],
+                  ),
+                  
+                ),
+              ),
+
+
 
             ],
           ),

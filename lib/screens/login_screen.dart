@@ -34,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             textColor: Colors.white,
             onPressed: (){
-              Navigator.of(context).pushReplacement(
+              Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => SignUpScreen()
                 )

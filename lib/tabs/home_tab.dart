@@ -88,15 +88,8 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Eventos"),
-        centerTitle: true,
-      ),
-      drawer: Drawer(
-        child: Container(),
-      ),
-      body: _loadingEventos == true
+    return Container(
+      child: _loadingEventos == true
           ? Center(child: CircularProgressIndicator())
           : Container(
               child: _eventos.length == 0

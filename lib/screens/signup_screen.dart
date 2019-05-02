@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:loja/models/user_model.dart';
 import 'package:scoped_model/scoped_model.dart';
 
@@ -16,6 +18,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  File _image;
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +39,62 @@ class _SignUpScreenState extends State<SignUpScreen> {
             child: ListView(
               padding: EdgeInsets.all(16.0),
               children: <Widget>[
+
+                Container(
+
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                  ),
+
+                  width: MediaQuery.of(context).size.width * 0.58,
+                  height: MediaQuery.of(context).size.width * 0.48,
+                  margin: EdgeInsets.fromLTRB(
+                      MediaQuery.of(context).size.width * 0.15,
+                      MediaQuery.of(context).size.width * 0.1,
+                      MediaQuery.of(context).size.width * 0.15,
+                      MediaQuery.of(context).size.width * 0.1),
+                      
+                  child: Container(
+
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(8))
+                    ),
+
+                    child: _image == null 
+                      ? IconButton(
+                        icon: Icon(
+                          Icons.person, 
+                          color: Colors.green, 
+                          size: MediaQuery.of(context).size.width * 0.48,
+                        ),
+                        onPressed: getImage
+                      )
+                      : InkWell(
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.58,
+                            height: MediaQuery.of(context).size.width * 0.48,
+
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.green,
+                                width: 2.0,
+                                style: BorderStyle.solid
+                              ),
+                              borderRadius: BorderRadius.all(Radius.circular(8))
+                            ),
+                            
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.all(Radius.circular(6)),
+                              child: Image.file(_image, fit:BoxFit.cover),
+                            )
+                            
+                          ),
+                          onTap: getImage,
+                        )
+                    ,
+                  ),
+                ),
+
                 TextFormField(
                   controller: _nameController,
                   decoration: InputDecoration(
@@ -84,7 +144,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     }
                   }
                 ),
-                SizedBox(height: 16.0),
+                SizedBox(height: MediaQuery.of(context).size.width * 0.12),
                 RaisedButton(
                   padding: EdgeInsets.symmetric(vertical: 14.0),
                   child: Text(
@@ -96,20 +156,29 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   textColor: Colors.white,
                   color: Theme.of(context).primaryColor,
                   onPressed: (){
-                    if (_formKey.currentState.validate()) {
+                    if (_formKey.currentState.validate() && _image != null) {
 
                       Map<String, dynamic> userData ={
                         "name": _nameController.text,
                         "email": _emailController.text,
-                        "address": _addressController.text
+                        "address": _addressController.text,
+                        "imagem":""
                       };
 
 
                       model.signUp(
                         userData: userData,
+                        imagem: _image,
                         pass: _passController.text,
                         onSuccess: _onSuccess,
                         onFail: _onFail
+                      );
+                    }else if (_image == null){
+                      _scaffoldKey.currentState.showSnackBar(
+                        SnackBar(content: Text("Selecione uma imagem de Perfil!"),
+                          backgroundColor: Colors.red,
+                          duration: Duration(seconds: 3)
+                        )
                       );
                     }
                   },
@@ -120,6 +189,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
         },
       )
     );
+  }
+
+  Future getImage() async {
+    var imagem = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      _image = imagem;
+    });
   }
 
   void _onSuccess(){

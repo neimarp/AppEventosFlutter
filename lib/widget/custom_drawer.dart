@@ -14,7 +14,7 @@ class CustomDrawer extends StatelessWidget {
     Widget _buildDrawerBack() => Container(
           decoration: BoxDecoration(
               gradient: LinearGradient(
-                  colors: [Color.fromARGB(255, 203, 236, 241), Colors.white],
+                  colors: [Colors.green, Colors.green[200]],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter)),
         );
@@ -29,64 +29,100 @@ class CustomDrawer extends StatelessWidget {
               Container(
                 margin: EdgeInsets.only(bottom: 8.0, left: 16.0),
                 padding: EdgeInsets.fromLTRB(0.0, 16.0, 16.0, 8.0),
-                height: 170.0,
-                child: Stack(
+                height: MediaQuery.of(context).size.width * 0.6,
+                child: Column(
+
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
                   children: <Widget>[
-                    Positioned(
-                      top: 20.0,
-                      left: 0.0,
-                      child: Text("EventApp",
+
+                    Container(
+                      margin: EdgeInsets.only(top: 5),
+                      child: Text("EventEsport",
                           style: TextStyle(
-                              fontSize: 34.0, fontWeight: FontWeight.bold)),
+                              fontSize: 34.0, fontWeight: FontWeight.bold, color: Colors.white)),
                     ),
-                    Positioned(
-                        left: 0.0,
-                        bottom: 0.0,
-                        child: ScopedModelDescendant<UserModel>(
-                          builder: (context, child, model) {
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  "Olá, ${ !model.isLoggedIn() ? "" : model.userData["name"] }",
+                    
+                    Container(
+                      child: ScopedModelDescendant<UserModel>(
+                        builder: (context, child, model) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+
+                              CircleAvatar(
+                                radius: 50.0,
+                                backgroundColor: const Color(0xFF778899),
+                                backgroundImage: NetworkImage(model.userData["imagem"]), // for Network image
+
+                              ),
+
+                              // model.userData["imagem"] != "" 
+                              // ? Container(
+                              //   width: MediaQuery.of(context).size.width * 0.2,
+                              //   height: MediaQuery.of(context).size.width * 0.2,
+
+                              //   decoration: BoxDecoration(
+                              //     border: Border.all(
+                              //       color: Colors.green,
+                              //       width: 2.0,
+                              //       style: BorderStyle.solid
+                              //     ),
+                              //     borderRadius: BorderRadius.all(Radius.circular(8))
+                              //   ),
+                                
+                              //   child: ClipRRect(
+                              //     borderRadius: BorderRadius.all(Radius.circular(6)),
+                              //     child: Image.network(model.userData["imagem"]),
+                              //   )
+                                
+                              // ): Container(),
+
+                              Text(
+                                "Olá, ${ !model.isLoggedIn() ? "" : model.userData["name"] }",
+                                style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              GestureDetector(
+                                child: Text( 
+                                  "Sair",
                                   style: TextStyle(
-                                      fontSize: 18.0,
+                                      color: Colors.grey[400],
+                                      fontSize: 16.0,
                                       fontWeight: FontWeight.bold),
                                 ),
-                                GestureDetector(
-                                  child: Text( 
-                                    !model.isLoggedIn() ? "Entre ou cadastre-se >" : "Sair",
-                                    style: TextStyle(
-                                        color: Theme.of(context).primaryColor,
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  onTap: () {
-                                    if (!model.isLoggedIn()) {
-                                      Navigator.of(context).pop();
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                LoginScreen()));
-                                    }else{
-                                      model.signOut();
-                                    }
-                                    
-                                  },
-                                )
-                              ],
-                            );
-                          },
-                        ))
+                                onTap: () {
+                                  if (model.isLoggedIn()) {
+                                    model.signOut();
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              LoginScreen()));
+                                  }else{
+                                    model.signOut();
+                                  }
+                                  
+                                },
+                              )
+                            ],
+                          );
+                        },
+                      ),
+                    )
                   ],
                 ),
               ),
-              Divider(),
-              DrawerTile(Icons.home, "Início", pageController, 0),
-              DrawerTile(Icons.list, "Produtos", pageController, 1),
-              DrawerTile(Icons.location_on, "Lojas", pageController, 2),
-              DrawerTile(
-                  Icons.playlist_add_check, "Meus Pedidos", pageController, 3),
+              Divider(color: Colors.white70),
+              DrawerTile(Icons.home, "Eventos", pageController, 0),
+              DrawerTile(Icons.event, "Cadastro Evento", pageController, 1),
+
             ],
           )
         ],

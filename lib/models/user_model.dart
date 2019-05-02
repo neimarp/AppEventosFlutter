@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -19,19 +22,18 @@ class UserModel extends Model {
     _loadCurrentUser();
   } 
 
-  void signUp({@required Map<String, dynamic> userData, @required String pass, @required VoidCallback onSuccess, @required VoidCallback onFail}){
+  void signUp({@required Map<String, dynamic> userData, @required String pass, @required VoidCallback onSuccess, @required VoidCallback onFail, @required File imagem}){
     isLoading = true;
     notifyListeners();
-
     _auth.createUserWithEmailAndPassword(
 
       email: userData["email"],
       password: pass
 
     ).then((user) async {
-
+      
       firebaseUser = user;
-      await _saveUserData(userData);
+      await _saveUserData(userData, imagem);
 
       onSuccess();
       isLoading = false;
@@ -87,7 +89,27 @@ class UserModel extends Model {
     return firebaseUser != null;
   }
 
-  Future<Null> _saveUserData(Map<String, dynamic> userData) async {
+  Future<String> _pickSaveImage({@required File imagem}) async {
+    
+    isLoading = true;
+    notifyListeners();
+
+    StorageReference ref = FirebaseStorage.instance.ref().child(DateTime.now().millisecondsSinceEpoch.toString());
+    StorageUploadTask uploadTask = ref.putFile(imagem);
+    uploadTask.events.listen((event) {
+
+    }).onError((error) {
+      isLoading = false;
+      notifyListeners();      
+    });
+
+    return await (await uploadTask.onComplete).ref.getDownloadURL();
+  }
+
+  Future<Null> _saveUserData(Map<String, dynamic> userData, File imagem) async {
+    String imageUrl = await _pickSaveImage(imagem : imagem);
+    print(imageUrl);
+    userData["imagem"] = imageUrl;
     this.userData = userData;
     await Firestore.instance.collection("users").document(firebaseUser.uid).setData(userData);
   }
