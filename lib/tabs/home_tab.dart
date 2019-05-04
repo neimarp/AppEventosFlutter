@@ -12,7 +12,7 @@ class _HomeTabState extends State<HomeTab> {
   Firestore _firestore = Firestore.instance;
   List<DocumentSnapshot> _eventos = [];
   bool _loadingEventos = true;
-  int _itensPorPagina = 20;
+  int _itensPorPagina = 10;
   DocumentSnapshot _lastDocument;
   ScrollController _scrollController = ScrollController();
   bool _gettingMaisEventos = false;
@@ -36,8 +36,8 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   _getMaisEventos() async {
-    print("Mais eventos foram procurados!");
 
+    print(_lastDocument.data);
     if (_maisEventosExistentes == false) {
       //dizer para o usuário q não há mais eventos disponíveis
       print("Não há mais eventos");
@@ -51,7 +51,8 @@ class _HomeTabState extends State<HomeTab> {
     Query q = _firestore
         .collection("eventos")
         .orderBy("nome")
-        .startAfter([_lastDocument.data]).limit(_itensPorPagina);
+        .startAfter([_lastDocument.data])
+        .limit(_itensPorPagina);
 
     QuerySnapshot querySnapshot = await q.getDocuments();
 

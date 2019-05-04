@@ -115,7 +115,7 @@ class _CadastroEventoScreenState extends State<CadastroEventoScreen> {
               Container(
                 margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.height*0.1),
                 padding: EdgeInsets.only(top: MediaQuery.of(context).size.height*0.25),
-                child: Text("Carregando ...", style: TextStyle(fontSize: 30.0,fontWeight: FontWeight.bold)),
+                child: Text("Salvando ...", style: TextStyle(fontSize: 30.0,fontWeight: FontWeight.bold)),
               ),
               Container(
                 child: CircularProgressIndicator()
@@ -669,7 +669,26 @@ class _CadastroEventoScreenState extends State<CadastroEventoScreen> {
                       IconButton(
                         padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.width * 0.001),
                         icon: Icon(Icons.save,color: Colors.white,size: MediaQuery.of(context).size.width * 0.07,), 
-                        onPressed: (){
+                        onPressed: (){}
+                      ),
+
+                      Container(
+                        child: Text(
+                          "Salvar",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontSize: 20
+                          ),
+                        ),
+                      )
+
+
+                    ],
+                  ),
+                  
+                ),
+                onTap: (){
                           if(_imagem == null){
                             showDialog(
                               context: context, 
@@ -702,25 +721,7 @@ class _CadastroEventoScreenState extends State<CadastroEventoScreen> {
                           else{
                             createData();
                           }
-                        }
-                      ),
-
-                      Container(
-                        child: Text(
-                          "Salvar",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            fontSize: 20
-                          ),
-                        ),
-                      )
-
-
-                    ],
-                  ),
-                  
-                ),
+                        },
               ),
 
 

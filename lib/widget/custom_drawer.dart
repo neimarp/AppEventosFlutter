@@ -29,7 +29,7 @@ class CustomDrawer extends StatelessWidget {
               Container(
                 margin: EdgeInsets.only(bottom: 8.0, left: 16.0),
                 padding: EdgeInsets.fromLTRB(0.0, 16.0, 16.0, 8.0),
-                height: MediaQuery.of(context).size.width * 0.6,
+                height: 280,
                 child: Column(
 
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,12 +51,24 @@ class CustomDrawer extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
 
-                              CircleAvatar(
-                                radius: 50.0,
-                                backgroundColor: const Color(0xFF778899),
-                                backgroundImage: NetworkImage(model.userData["imagem"]), // for Network image
+                              model.userData["imagem"] != null
+                              ? Container(
+                                margin: EdgeInsets.only(bottom: 20, top: 20, left: 65),
+                                child: CircleAvatar(
+                                  radius: 60.0,
+                                  backgroundColor: const Color(0xFF778899),
+                                  backgroundImage: NetworkImage(model.userData["imagem"]), // for Network image
 
-                              ),
+                                ),
+                              )
+                              : Container(
+                                margin: EdgeInsets.only(bottom: 20, top: 20, left: 65),
+                                child: CircleAvatar(
+                                  radius: 60.0,
+                                  backgroundColor: const Color(0xFF778899),
+                                ),
+                              )
+                              ,
 
                               // model.userData["imagem"] != "" 
                               // ? Container(

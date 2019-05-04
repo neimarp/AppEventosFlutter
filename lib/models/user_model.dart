@@ -34,7 +34,7 @@ class UserModel extends Model {
       
       firebaseUser = user;
       await _saveUserData(userData, imagem);
-
+      signOut();
       onSuccess();
       isLoading = false;
       notifyListeners();
@@ -108,7 +108,6 @@ class UserModel extends Model {
 
   Future<Null> _saveUserData(Map<String, dynamic> userData, File imagem) async {
     String imageUrl = await _pickSaveImage(imagem : imagem);
-    print(imageUrl);
     userData["imagem"] = imageUrl;
     this.userData = userData;
     await Firestore.instance.collection("users").document(firebaseUser.uid).setData(userData);
