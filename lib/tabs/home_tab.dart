@@ -37,7 +37,6 @@ class _HomeTabState extends State<HomeTab> {
 
   _getMaisEventos() async {
 
-    print(_lastDocument.data);
     if (_maisEventosExistentes == false) {
       //dizer para o usuário q não há mais eventos disponíveis
       print("Não há mais eventos");
