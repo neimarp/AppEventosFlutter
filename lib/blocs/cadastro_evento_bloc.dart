@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:loja/validadores.dart';
+import 'package:eventesports/validadores.dart';
 import 'package:rxdart/rxdart.dart';
 
 class Bloc extends Object with Validators implements BaseBloc{
