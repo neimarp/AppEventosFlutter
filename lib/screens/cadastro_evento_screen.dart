@@ -138,9 +138,9 @@ class _CadastroEventoScreenState extends State<CadastroEventoScreen> {
                 height: MediaQuery.of(context).size.width * 0.48,
                 margin: EdgeInsets.fromLTRB(
                     MediaQuery.of(context).size.width * 0.15,
-                    MediaQuery.of(context).size.width * 0.00,
                     MediaQuery.of(context).size.width * 0.15,
-                    MediaQuery.of(context).size.width * 0.0),
+                    MediaQuery.of(context).size.width * 0.15,
+                    MediaQuery.of(context).size.width * 0.03),
                     
                 child: Container(
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:loja/screens/cadastro_evento_screen.dart';
 import 'package:loja/screens/cadastro_usuario_screen.dart';
+import 'package:loja/screens/chat_screen.dart';
 import 'package:loja/tabs/home_tab.dart';
 import 'package:loja/widget/custom_drawer.dart';
 
@@ -30,6 +31,14 @@ class HomeScreen extends StatelessWidget {
             centerTitle: true,
           ),
           body: CadastroEventoScreen(),
+        ),
+        Scaffold(
+          drawer: CustomDrawer(_pageController),
+          appBar: AppBar(
+            title: Text("Chat"),
+            centerTitle: true,
+          ),
+          body: ChatScreen(),
         ),
       ],
     );

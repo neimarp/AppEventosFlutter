@@ -18,9 +18,17 @@ class _HomeTabState extends State<HomeTab> {
   bool _gettingMaisEventos = false;
   bool _maisEventosExistentes = true;
 
+  String _idSave;
+
   _getEventos() async {
     Query q =
         _firestore.collection("eventos").orderBy("nome").limit(_itensPorPagina);
+
+     Future<QuerySnapshot> q2 =  await _firestore.collection("eventos").getDocuments().then(
+       (_) { 
+            print(_.documents[0].data);                              
+        }
+     );
 
     setState(() {
       _loadingEventos = true;
