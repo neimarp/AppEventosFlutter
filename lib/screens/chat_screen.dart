@@ -91,7 +91,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                 itemBuilder: (context, index) {
                                   //print(snapshot.data.documents.toList()[0].data); 
                                   List r = snapshot.data.documents.reversed.toList();
-                                  print(r[index].data);
+                                  //print(r[index].data);
                                   //r.length >= 1 ? ChatMessage(r[index].data) : Center();
                                   //return Center();
                                   return ChatMessage(r[index].data);
@@ -184,14 +184,15 @@ class _TextComposerState extends State<TextComposer> {
                     },
                     onSubmitted: (text){
                       //_handleSubmitted(text);
-                        Firestore.instance.collection("messages").add(
+                      text.trim().length > 0 
+                      ? Firestore.instance.collection("messages").add(
                           {
                             "text" : text,
                             "imgUrl" : "",
                             "senderName" : model.userData["name"],
                             "senderPhotoUrl" : model.userData["imagem"]
                           }
-                        );
+                      ) : _reset();
                       _reset();
                     },
                   ),
@@ -202,30 +203,33 @@ class _TextComposerState extends State<TextComposer> {
                         ? CupertinoButton(
                             child: Text("Enviar"),
                             onPressed: _isComposing ? () {
+                              print("Aqui 2 ${_textController.text.isNotEmpty}");
                               //_handleSubmitted(_textController.text);
-                              Firestore.instance.collection("messages").add(
+                              _textController.text.trim().length > 0 
+                              ? Firestore.instance.collection("messages").add(
                                 {
                                   "text" : _textController.text,
                                   "imgUrl" : "",
                                   "senderName" : model.userData["name"],
                                   "senderPhotoUrl" : model.userData["imagem"]
                                 }
-                              );
+                              ): _reset();
                               _reset();
                             } : null,
                           )
                         : IconButton(
                             icon: Icon(Icons.send),
                             onPressed: _isComposing ? () {
-                              Firestore.instance.collection("messages").add(
+                              _textController.text.trim().length > 0 
+                              ? Firestore.instance.collection("messages").add(
                                 {
                                   "text" : _textController.text,
                                   "imgUrl" : "",
                                   "senderName" : model.userData["name"],
                                   "senderPhotoUrl" : model.userData["imagem"]
                                 }
-                              );
-                              //_handleSubmitted(_textController.text);
+                              )
+                              : _reset();
                               _reset();
                             } : null,
                           ))
@@ -267,9 +271,9 @@ class ChatMessage extends StatelessWidget {
                 ),
                 Container(
                   margin: const EdgeInsets.only(top: 5.0),
-                  child: data["imgUrl"] != null ?
+                  child: data["imgUrl"] != "" ?
                     Image.network(data["imgUrl"], width: 250.0,) :
-                      Text(data["text"])
+                      Text(data["text"],style: TextStyle(color: Colors.black),)
                 )
               ],
             ),
