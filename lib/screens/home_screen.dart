@@ -22,7 +22,7 @@ class HomeScreen extends StatelessWidget {
             title: Text("Eventos"),
             centerTitle: true,
           ),
-          body: HomeTab(),
+          body: HomeTab()
         ),
         Scaffold(
           drawer: CustomDrawer(_pageController),

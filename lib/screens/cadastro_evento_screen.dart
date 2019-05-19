@@ -56,7 +56,7 @@ class _CadastroEventoScreenState extends State<CadastroEventoScreen> {
                                     'pago':'$_pagoSelect', 'estacionamento':'$_estacionamentoSelect',
                                     'data':'$_dataEvento', 'minParticipantes':'$_minParticipantes',
                                     'maxParticipantes':'$_maxParticipantes', 'esporte':'$_esporte',
-                             
+                                    'dataCadastro': FieldValue.serverTimestamp()
                              }).then(
                                 (_) { 
                                   _idSave = _.documentID;
