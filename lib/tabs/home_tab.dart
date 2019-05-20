@@ -67,7 +67,7 @@ class _HomeTabState extends State<HomeTab> {
     if (nomeEvento != null) {
       q = _firestore
         .collection("eventos")
-        .where('esporte', isEqualTo: nomeEvento);
+        .where('esporte', isEqualTo: nomeEvento).limit(_itensPorPagina);
     } else {
       q = _firestore
         .collection("eventos")
