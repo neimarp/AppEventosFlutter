@@ -109,6 +109,7 @@ class UserModel extends Model {
   Future<Null> _saveUserData(Map<String, dynamic> userData, File imagem) async {
     String imageUrl = await _pickSaveImage(imagem : imagem);
     userData["imagem"] = imageUrl;
+    userData["id"] = firebaseUser.uid;
     this.userData = userData;
     await Firestore.instance.collection("users").document(firebaseUser.uid).setData(userData);
   }

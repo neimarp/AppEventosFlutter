@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:loja/models/user_model.dart';
 import 'package:loja/screens/informacoes_evento_screen.dart';
 import 'package:loja/tiles/icon_tiles.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class HomeTab extends StatefulWidget {
   HomeTab();
@@ -140,6 +142,19 @@ class _HomeTabState extends State<HomeTab> {
     });
   }
 
+  _query() async {
+    Query q = _firestore
+        .collection("eventos");
+        //.orderBy("dataCadastro");
+
+    QuerySnapshot querySnapshot = await q.getDocuments();
+    print(querySnapshot.documents[0].documentID);
+
+    DocumentSnapshot query2 = await _firestore.collection('eventos').document(querySnapshot.documents[0].documentID).get();
+    print(query2.data);
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -181,165 +196,195 @@ class _HomeTabState extends State<HomeTab> {
                     ]
                 ),
               ),
+              // InkWell(
+              //   onTap: (){
+              //     print("Clicou!");
+              //     _query();
+              //   },
+              //   child: Container(
+              //     color: Colors.grey,
+              //     height: 50,
+              //     width: MediaQuery.of(context).size.width,
+              //     child: Center(child: Text("Clique!")),
+              //   )
+              // ),
               Expanded(
                 child: Container(
-                child: _loadingEventos == true
-                    ? Center(child: CircularProgressIndicator())
-                    : Container(
-                        child: _eventos.length == 0
-                            // Se não tiver eventos, aparece somente um texto no centro
-                            ? Center(child: Text("Sem eventos no momento!"))
+                child: ScopedModelDescendant<UserModel>(
+                  builder: (context, snapshot,model) {
+                    return _loadingEventos == true
+                        ? Center(child: CircularProgressIndicator())
+                        : Container(
+                            child: _eventos.length == 0
+                                // Se não tiver eventos, aparece somente um texto no centro
+                                ? Center(child: Text("Sem eventos no momento!"))
 
-                            // Se tiver eventos, aparece a listagem "ListView"
-                            : ListView.builder(
-                                controller: _scrollController,
-                                itemCount: _eventos.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  // Padding para dar espaçamentos nas bordas
-                                  return InkWell(
-                                    onTap: (){
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) => InformacoesEventoScreen()
-                                        )
-                                      );
-                                    },
-                                    child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: MediaQuery.of(context).size.width * 0.010,
-                                        vertical: MediaQuery.of(context).size.width * 0.010,
-                                      ),
+                                // Se tiver eventos, aparece a listagem "ListView"
+                                : ListView.builder(
+                                    controller: _scrollController,
+                                    itemCount: _eventos.length,
+                                    itemBuilder: (BuildContext context, int index) {
+                                      // Padding para dar espaçamentos nas bordas
+                                      return InkWell(
+                                        onTap: (){
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) => InformacoesEventoScreen(
+                                                idUsuario: model.userData["id"],
+                                                id: _eventos[index].documentID,
+                                                data: _eventos[index].data["data"],
+                                                descricao: _eventos[index].data["descricao"],
+                                                esporte: _eventos[index].data["esporte"],
+                                                estacionamento: _eventos[index].data["estacionamento"],
+                                                hora: _eventos[index].data["hora"],
+                                                imagem: _eventos[index].data["imagem"],
+                                                maxparticipantes: _eventos[index].data["maxparticipantes"],
+                                                minparticipantes: _eventos[index].data["minparticipantes"],
+                                                nome: _eventos[index].data["nome"],
+                                                pago: _eventos[index].data["pago"],
+                                                sexo: _eventos[index].data["sexo"],
+                                              )
+                                            )
+                                          );
+                                        },
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: MediaQuery.of(context).size.width * 0.010,
+                                            vertical: MediaQuery.of(context).size.width * 0.010,
+                                          ),
 
-                                      // Container com as informações
-                                      child: Container(
-                                        child: Material(
-                                          color: Colors.white,
-                                          elevation: 7.0,
-                                          borderRadius: BorderRadius.circular(5.0),
-                                          child: Row(
-                                            children: <Widget>[
+                                          // Container com as informações
+                                          child: Container(
+                                            child: Material(
+                                              color: Colors.white,
+                                              elevation: 7.0,
+                                              borderRadius: BorderRadius.circular(5.0),
+                                              child: Row(
+                                                children: <Widget>[
 
-                                              // Box com a imagem
-                                              Container(
-                                                height:MediaQuery.of(context).size.width * 0.38,
-                                                width: MediaQuery.of(context).size.width * 0.38,
-                                                child: ClipRRect(
-                                                  borderRadius: BorderRadius.horizontal(left: Radius.circular(5.0)),
-                                                  child: _eventos[index].data["imagem"] != null
-                                                      ? Image.network(
-                                                          _eventos[index].data["imagem"],
-                                                          fit: BoxFit.cover,
-                                                          alignment: Alignment.topLeft,
-                                                        )
-                                                      : Container(),
-                                                ),
-                                              ),
-
-                                              // Box com as informações
-                                              Container(
-                                                height: MediaQuery.of(context).size.width * 0.38,
-                                                width: MediaQuery.of(context).size.width * 0.59,
-                                                padding: EdgeInsets.only(left: MediaQuery.of(context).size.width *0.03),
-                                                child: Column(
-                                                  children: <Widget>[
-                                                    // Título do Evento
-                                                    Container(
-                                                      alignment: Alignment.bottomLeft,
-                                                      height: MediaQuery.of(context).size.width *0.09,
-                                                      child: Text(
-                                                        _eventos[index].data["nome"],
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow.ellipsis,
-                                                        style: TextStyle(
-                                                          color: Colors.green,
-                                                          fontWeight: FontWeight.bold,
-                                                          fontSize: MediaQuery.of(context).size.width * 0.065
-                                                        )
-                                                      ),
+                                                  // Box com a imagem
+                                                  Container(
+                                                    height:MediaQuery.of(context).size.width * 0.38,
+                                                    width: MediaQuery.of(context).size.width * 0.38,
+                                                    child: ClipRRect(
+                                                      borderRadius: BorderRadius.horizontal(left: Radius.circular(5.0)),
+                                                      child: _eventos[index].data["imagem"] != null
+                                                          ? Image.network(
+                                                              _eventos[index].data["imagem"],
+                                                              fit: BoxFit.cover,
+                                                              alignment: Alignment.topLeft,
+                                                            )
+                                                          : Container(),
                                                     ),
+                                                  ),
 
-                                                    // Descrição
-                                                    Container(
-                                                      alignment: Alignment.centerLeft,
-                                                      height: MediaQuery.of(context).size.width * 0.155,
-                                                      child: Text(
-                                                        _eventos[index].data["descricao"],
-                                                        maxLines: 3,
-                                                        overflow: TextOverflow.ellipsis,
-                                                        style: TextStyle(
-                                                          color: Colors.green,
-                                                          fontWeight: FontWeight.bold,
-                                                          fontSize: MediaQuery.of(context).size.width * 0.032
-                                                        )
-                                                      ),
-                                                    ),
+                                                  // Box com as informações
+                                                  Container(
+                                                    height: MediaQuery.of(context).size.width * 0.38,
+                                                    width: MediaQuery.of(context).size.width * 0.59,
+                                                    padding: EdgeInsets.only(left: MediaQuery.of(context).size.width *0.03),
+                                                    child: Column(
+                                                      children: <Widget>[
+                                                        // Título do Evento
+                                                        Container(
+                                                          alignment: Alignment.bottomLeft,
+                                                          height: MediaQuery.of(context).size.width *0.09,
+                                                          child: Text(
+                                                            _eventos[index].data["nome"],
+                                                            maxLines: 1,
+                                                            overflow: TextOverflow.ellipsis,
+                                                            style: TextStyle(
+                                                              color: Colors.green,
+                                                              fontWeight: FontWeight.bold,
+                                                              fontSize: MediaQuery.of(context).size.width * 0.065
+                                                            )
+                                                          ),
+                                                        ),
 
-                                                    // Linha de Icones de observação
-                                                    Container(
-                                                        height: MediaQuery.of(context).size.width * 0.098,
-                                                        margin: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.015),
-                                                        child: Row(
-                                                          children: <Widget>[
-                                                            // ícone de horario de evento
-                                                            _eventos[index].data["hora"] == ""
-                                                                ? Container()
-                                                                : IconTile(
-                                                                    icon: Icons.watch_later,
-                                                                    text: _eventos[index].data["hora"],
-                                                                  ),
+                                                        // Descrição
+                                                        Container(
+                                                          alignment: Alignment.centerLeft,
+                                                          height: MediaQuery.of(context).size.width * 0.155,
+                                                          child: Text(
+                                                            _eventos[index].data["descricao"],
+                                                            maxLines: 3,
+                                                            overflow: TextOverflow.ellipsis,
+                                                            style: TextStyle(
+                                                              color: Colors.green,
+                                                              fontWeight: FontWeight.bold,
+                                                              fontSize: MediaQuery.of(context).size.width * 0.032
+                                                            )
+                                                          ),
+                                                        ),
 
-                                                            // ícone de sexo do evento
-                                                            _eventos[index].data["sexo"] == ""
-                                                                ? Container()
-                                                                : _eventos[index].data["sexo"] == "M"
-                                                                    ? IconTile(
-                                                                        icon: FontAwesomeIcons.female,
-                                                                        text: _eventos[index].data["sexo"]
-                                                                      )
-                                                                    : _eventos[index].data["sexo"] == "H"
+                                                        // Linha de Icones de observação
+                                                        Container(
+                                                            height: MediaQuery.of(context).size.width * 0.098,
+                                                            margin: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.015),
+                                                            child: Row(
+                                                              children: <Widget>[
+                                                                // ícone de horario de evento
+                                                                _eventos[index].data["hora"] == ""
+                                                                    ? Container()
+                                                                    : IconTile(
+                                                                        icon: Icons.watch_later,
+                                                                        text: _eventos[index].data["hora"],
+                                                                      ),
+
+                                                                // ícone de sexo do evento
+                                                                _eventos[index].data["sexo"] == ""
+                                                                    ? Container()
+                                                                    : _eventos[index].data["sexo"] == "M"
                                                                         ? IconTile(
-                                                                            icon: FontAwesomeIcons.male,
-                                                                            text: _eventos[index].data["sexo"])
-                                                                        : Container(),
+                                                                            icon: FontAwesomeIcons.female,
+                                                                            text: _eventos[index].data["sexo"]
+                                                                          )
+                                                                        : _eventos[index].data["sexo"] == "H"
+                                                                            ? IconTile(
+                                                                                icon: FontAwesomeIcons.male,
+                                                                                text: _eventos[index].data["sexo"])
+                                                                            : Container(),
 
-                                                            // ícone de evento pago
-                                                            _eventos[index].data["pago"] == ""
-                                                                ? Container()
-                                                                : _eventos[index].data["pago"] == "s"
-                                                                    ? IconTile(
-                                                                        icon: Icons.monetization_on,
-                                                                        text: "Pago",
-                                                                      )
-                                                                    : _eventos[index].data["pago"] == "n"
+                                                                // ícone de evento pago
+                                                                _eventos[index].data["pago"] == ""
+                                                                    ? Container()
+                                                                    : _eventos[index].data["pago"] == "s"
                                                                         ? IconTile(
-                                                                            icon: Icons.money_off,
-                                                                            text:"Free",
+                                                                            icon: Icons.monetization_on,
+                                                                            text: "Pago",
+                                                                          )
+                                                                        : _eventos[index].data["pago"] == "n"
+                                                                            ? IconTile(
+                                                                                icon: Icons.money_off,
+                                                                                text:"Free",
+                                                                              )
+                                                                            : Container(),
+
+                                                                // ícone de estacionamento
+                                                                _eventos[index].data["estacionamento"] == ""
+                                                                    ? Container()
+                                                                    : _eventos[index].data["estacionamento"] == "s"
+                                                                        ? IconTile(
+                                                                            icon: Icons.local_parking,
+                                                                            text: "Est",
                                                                           )
                                                                         : Container(),
-
-                                                            // ícone de estacionamento
-                                                            _eventos[index].data["estacionamento"] == ""
-                                                                ? Container()
-                                                                : _eventos[index].data["estacionamento"] == "s"
-                                                                    ? IconTile(
-                                                                        icon: Icons.local_parking,
-                                                                        text: "Est",
-                                                                      )
-                                                                    : Container(),
-                                                          ],
-                                                        )),
-                                                  ],
-                                                ),
+                                                              ],
+                                                            )),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                            ],
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                      ),
+                                      );
+                                    },
+                                  ),
+                          );
+                  }
+                ),
                 )
               )
             ],
