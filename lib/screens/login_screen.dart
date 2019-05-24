@@ -19,6 +19,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var assetsImage = new AssetImage('lib/images/jogos2.png');
+    var image = new Image(image: assetsImage);
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -54,6 +56,10 @@ class _LoginScreenState extends State<LoginScreen> {
             child: ListView(
               padding: EdgeInsets.all(16.0),
               children: <Widget>[
+                Container(
+                  child: image,
+                ),
+                SizedBox(height: 16.0),
                 TextFormField(
                   controller: _emailController,
                   decoration: InputDecoration(
