@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loja/models/user_model.dart';
+import 'package:loja/widget/multi_select.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -15,11 +17,64 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _emailController = TextEditingController();
   final _passController = TextEditingController();
   final _addressController = TextEditingController();
+  final _preferenciasController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  bool _validateEsporte;
   File _image;
+
+  Firestore _firestore = Firestore.instance;
+
+  List<dynamic> reportList = [];
+
+  void _searchEsportes() async {
+    var esportes = await _firestore.collection("esportes").orderBy("nome").getDocuments();
+    reportList = esportes.documents.map((e){
+      return e.data["nome"];
+    }).toList();   
+    //print(reportList); 
+  }  
+
+  List<dynamic> selectedReportList = List();
+
+  _showReportDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+            title: Text("Selecione os Esportes"),
+            content: MultiSelect(
+              reportList,
+              onSelectionChanged: (selectedList) {
+                setState(() {
+                  selectedReportList = selectedList;
+                  if(selectedReportList.length > 0){
+                    _preferenciasController.text = selectedReportList.toString();
+                  }else{
+                    _preferenciasController.text = "";
+                  }
+                });
+              }
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("confirmar"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+      }
+    );
+  }
+  @override
+  void initState() {
+    super.initState();
+    _searchEsportes();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -144,6 +199,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     }
                   }
                 ),
+                SizedBox(height: 16.0),
+                TextField(
+                  controller: _preferenciasController,
+                  enableInteractiveSelection: false,
+                  decoration: InputDecoration(
+                    hintText: "Preferências Esportivas",
+                    errorText: _validateEsporte == true ? 'Selecione um Esporte' : null,
+                  ),
+                  onTap: () { 
+                    _showReportDialog();
+                    FocusScope.of(context).requestFocus(new FocusNode()); 
+                  },
+                  
+                ),
                 SizedBox(height: MediaQuery.of(context).size.width * 0.12),
                 RaisedButton(
                   padding: EdgeInsets.symmetric(vertical: 14.0),
@@ -156,13 +225,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   textColor: Colors.white,
                   color: Theme.of(context).primaryColor,
                   onPressed: (){
-                    if (_formKey.currentState.validate() && _image != null) {
+                    print(_preferenciasController.text.isEmpty);
+                    if (_preferenciasController.text.isEmpty){
+                      setState(() {
+                        _validateEsporte = true;
+                      });
+                    }else{
+                      setState(() {
+                        _validateEsporte = false;
+                      });
+                    }
+                    if (_formKey.currentState.validate() && _image != null && _preferenciasController.text.isEmpty != true) {
 
                       Map<String, dynamic> userData ={
                         "name": _nameController.text,
                         "email": _emailController.text,
                         "address": _addressController.text,
-                        "imagem":""
+                        "imagem":"",
+                        "preferencias": _preferenciasController.text
                       };
 
 
