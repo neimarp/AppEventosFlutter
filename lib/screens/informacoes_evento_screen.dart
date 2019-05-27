@@ -55,7 +55,9 @@ class _InformacoesEventoScreenState extends State<InformacoesEventoScreen> {
                           .where('idEvento', isEqualTo: widget.id)
                           .getDocuments();
     
-    eventoConfirmado = query2.documents[0].documentID;
+    if (query2.documents.length > 0) {
+      eventoConfirmado = query2.documents[0].documentID;      
+    }
 
     setState(() {
       _isLoadingInscrito = false;
@@ -93,30 +95,27 @@ class _InformacoesEventoScreenState extends State<InformacoesEventoScreen> {
 
   void _deleteData(idUsuario) async {
 
-      //setState(() { _isLoading = true;});
+      setState(() { _isLoading = true;});
+
       print(eventoConfirmado);
-      //DocumentReference ref = await db.collection('eventosConfirmados').document();
+      db.collection('eventosConfirmados').document(eventoConfirmado).delete().then( 
 
+        (_) { 
+          setState(() { _isLoading = false; _inscrito = false;}); 
+          _getInscrito();
 
+      }).catchError((e){
 
+        _scaffoldKey.currentState.showSnackBar(
+          SnackBar(content: Text("Falha ao Desinscrever do Evento!"),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3)
+          )
+        );
+        
+        _isLoading = false;
 
-                            //   .add({'idEvento': widget.id,'idUsuario': idUsuario,
-                            //         'dataCadastro': FieldValue.serverTimestamp()
-                            //  }).then(
-                            //     (_) { 
-                            //       setState(() { _isLoading = false;}); 
-                            //       _getInscrito();                        
-                                  
-                            //   }).catchError((e){
-                            //     _scaffoldKey.currentState.showSnackBar(
-                            //       SnackBar(content: Text("Falha ao Inscrever no Evento!"),
-                            //         backgroundColor: Colors.red,
-                            //         duration: Duration(seconds: 3)
-                            //       )
-                            //     );
-                                
-                            //     _isLoading = false;
-                            //   });
+      });
     
   }
 
