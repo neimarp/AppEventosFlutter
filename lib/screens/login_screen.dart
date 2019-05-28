@@ -56,10 +56,11 @@ class _LoginScreenState extends State<LoginScreen> {
             child: ListView(
               padding: EdgeInsets.all(16.0),
               children: <Widget>[
+                SizedBox(height: 19.0),
                 Container(
                   child: image,
                 ),
-                SizedBox(height: 16.0),
+                SizedBox(height: 23.0),
                 TextFormField(
                   controller: _emailController,
                   decoration: InputDecoration(

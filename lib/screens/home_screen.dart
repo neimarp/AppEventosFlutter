@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:loja/models/user_model.dart';
+import 'package:loja/screens/agenda_screen.dart';
 import 'package:loja/screens/cadastro_evento_screen.dart';
 import 'package:loja/screens/cadastro_usuario_screen.dart';
 import 'package:loja/screens/chat_screen.dart';
 import 'package:loja/screens/multiselect_teste.dart';
 import 'package:loja/tabs/home_tab.dart';
 import 'package:loja/widget/custom_drawer.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class HomeScreen extends StatelessWidget {
 
@@ -48,6 +51,18 @@ class HomeScreen extends StatelessWidget {
             centerTitle: true,
           ),
           body: MultiSelectScreen(),
+        ),
+        Scaffold(
+          drawer: CustomDrawer(_pageController),
+          appBar: AppBar(
+            title: Text("Agenda"),
+            centerTitle: true,
+          ),
+          body: ScopedModelDescendant<UserModel>(
+            builder: (context, child, model) {
+              return AgendaScreen(userId: model.userData["id"]);
+            }
+          ),
         ),
       ],
     );
