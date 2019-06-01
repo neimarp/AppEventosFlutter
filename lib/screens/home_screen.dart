@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:loja/models/user_model.dart';
 import 'package:loja/screens/agenda_screen.dart';
 import 'package:loja/screens/cadastro_evento_screen.dart';
-import 'package:loja/screens/cadastro_usuario_screen.dart';
 import 'package:loja/screens/chat_screen.dart';
 import 'package:loja/screens/multiselect_teste.dart';
 import 'package:loja/tabs/home_tab.dart';
@@ -47,14 +46,6 @@ class HomeScreen extends StatelessWidget {
         Scaffold(
           drawer: CustomDrawer(_pageController),
           appBar: AppBar(
-            title: Text("MultiSelectTeste"),
-            centerTitle: true,
-          ),
-          body: MultiSelectScreen(),
-        ),
-        Scaffold(
-          drawer: CustomDrawer(_pageController),
-          appBar: AppBar(
             title: Text("Agenda"),
             centerTitle: true,
           ),
@@ -64,6 +55,14 @@ class HomeScreen extends StatelessWidget {
             }
           ),
         ),
+        Scaffold(
+          drawer: CustomDrawer(_pageController),
+          appBar: AppBar(
+            title: Text("MultiSelectTeste"),
+            centerTitle: true,
+          ),
+          body: MultiSelectScreen(),
+        ),        
       ],
     );
 

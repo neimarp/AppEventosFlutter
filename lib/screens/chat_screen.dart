@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:scoped_model/scoped_model.dart';
@@ -14,48 +13,48 @@ import 'package:image_picker/image_picker.dart';
 final googleSignIn = GoogleSignIn();
 final auth = FirebaseAuth.instance;
 
-Future<Null> _ensureLoggedIn() async {
-  GoogleSignInAccount user = googleSignIn.currentUser;
-  if(user == null)
-    user = await googleSignIn.signInSilently();
-  if(user == null)
-    user = await googleSignIn.signIn();
-  if(await auth.currentUser() == null){
+// Future<Null> _ensureLoggedIn() async {
+//   GoogleSignInAccount user = googleSignIn.currentUser;
+//   if(user == null)
+//     user = await googleSignIn.signInSilently();
+//   if(user == null)
+//     user = await googleSignIn.signIn();
+//   if(await auth.currentUser() == null){
 
-    final GoogleSignInAccount googleUser = await googleSignIn.signIn();
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+//     final GoogleSignInAccount googleUser = await googleSignIn.signIn();
+//     final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
-    //GoogleSignInAuthentication credentials = await googleSignIn.currentUser.authentication;
+//     //GoogleSignInAuthentication credentials = await googleSignIn.currentUser.authentication;
 
-    AuthCredential credentials = GoogleAuthProvider.getCredential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
+//     AuthCredential credentials = GoogleAuthProvider.getCredential(
+//       accessToken: googleAuth.accessToken,
+//       idToken: googleAuth.idToken,
+//     );
 
-    await auth.signInWithCredential(credentials);
+//     await auth.signInWithCredential(credentials);
 
-    // await auth.signInWithCredential(
-    //     idToken: credentials.idToken,
-    //     accessToken: credentials.accessToken
-    // );
-  }
-}
+//     // await auth.signInWithCredential(
+//     //     idToken: credentials.idToken,
+//     //     accessToken: credentials.accessToken
+//     // );
+//   }
+// }
 
-_handleSubmitted(String text) async {
-  //await _ensureLoggedIn();
-  _sendMessage(text: text);
-}
+// _handleSubmitted(String text) async {
+//   //await _ensureLoggedIn();
+//   _sendMessage(text: text);
+// }
 
-void _sendMessage({String text, String imgUrl}){
-  Firestore.instance.collection("messages").add(
-    {
-      "text" : text,
-      "imgUrl" : imgUrl,
-      "senderName" : googleSignIn.currentUser.displayName,
-      "senderPhotoUrl" : googleSignIn.currentUser.photoUrl
-    }
-  );
-}
+// void _sendMessage({String text, String imgUrl}){
+//   Firestore.instance.collection("messages").add(
+//     {
+//       "text" : text,
+//       "imgUrl" : imgUrl,
+//       "senderName" : googleSignIn.currentUser.displayName,
+//       "senderPhotoUrl" : googleSignIn.currentUser.photoUrl
+//     }
+//   );
+// }
 
 
 class ChatScreen extends StatefulWidget {

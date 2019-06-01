@@ -135,8 +135,8 @@ class CustomDrawer extends StatelessWidget {
               DrawerTile(Icons.home, "Eventos", pageController, 0),
               DrawerTile(Icons.event, "Cadastro Evento", pageController, 1),
               DrawerTile(Icons.chat, "Chat", pageController, 2),
-              DrawerTile(Icons.chat, "MultiSelectTest", pageController, 3),
-              DrawerTile(Icons.calendar_today, "Agenda", pageController, 4),
+              DrawerTile(Icons.calendar_today, "Agenda", pageController, 3),
+              //DrawerTile(Icons.chat, "MultiSelectTest", pageController, 4),
 
             ],
           )

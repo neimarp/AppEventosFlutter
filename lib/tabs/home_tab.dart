@@ -4,7 +4,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:loja/models/user_model.dart';
 import 'package:loja/screens/informacoes_evento_screen.dart';
 import 'package:loja/tiles/icon_tiles.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class HomeTab extends StatefulWidget {
@@ -142,18 +141,18 @@ class _HomeTabState extends State<HomeTab> {
     });
   }
 
-  _query() async {
-    Query q = _firestore
-        .collection("eventos");
-        //.orderBy("dataCadastro");
+  // _query() async {
+  //   Query q = _firestore
+  //       .collection("eventos");
+  //       //.orderBy("dataCadastro");
 
-    QuerySnapshot querySnapshot = await q.getDocuments();
-    print(querySnapshot.documents[0].documentID);
+  //   QuerySnapshot querySnapshot = await q.getDocuments();
+  //   print(querySnapshot.documents[0].documentID);
 
-    DocumentSnapshot query2 = await _firestore.collection('eventos').document(querySnapshot.documents[0].documentID).get();
-    print(query2.data);
+  //   DocumentSnapshot query2 = await _firestore.collection('eventos').document(querySnapshot.documents[0].documentID).get();
+  //   print(query2.data);
 
-  }
+  // }
 
   @override
   Widget build(BuildContext context) {

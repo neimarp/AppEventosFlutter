@@ -70,26 +70,26 @@ class _InformacoesEventoScreenState extends State<InformacoesEventoScreen> {
 
   void _createData(idUsuario) async {
 
-      setState(() { _isLoading = true;});
+    setState(() { _isLoading = true;});
 
-      DocumentReference ref = await db.collection('eventosConfirmados')
-                              .add({'idEvento': widget.id,'idUsuario': idUsuario,
-                                    'dataCadastro': FieldValue.serverTimestamp()
-                             }).then(
-                                (_) { 
-                                  setState(() { _isLoading = false;}); 
-                                  _getInscrito();                        
-                                  
-                              }).catchError((e){
-                                _scaffoldKey.currentState.showSnackBar(
-                                  SnackBar(content: Text("Falha ao Inscrever no Evento!"),
-                                    backgroundColor: Colors.red,
-                                    duration: Duration(seconds: 3)
-                                  )
-                                );
-                                
-                                _isLoading = false;
-                              });
+    await db.collection('eventosConfirmados')
+      .add({'idEvento': widget.id,'idUsuario': idUsuario,
+            'dataCadastro': FieldValue.serverTimestamp()
+      }).then(
+        (_) { 
+          setState(() { _isLoading = false;}); 
+          _getInscrito();                        
+          
+      }).catchError((e){
+        _scaffoldKey.currentState.showSnackBar(
+          SnackBar(content: Text("Falha ao Inscrever no Evento!"),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3)
+          )
+        );
+        
+        _isLoading = false;
+      });
     
   }
 

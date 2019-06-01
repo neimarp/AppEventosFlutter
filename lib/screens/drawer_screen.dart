@@ -16,7 +16,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
       );
     }
 
-    var dercoracao = BoxDecoration( color: Colors.transparent, border: Border.all(color: Colors.blue,width: 0));
+    //var dercoracao = BoxDecoration( color: Colors.transparent, border: Border.all(color: Colors.blue,width: 0));
 
     return Scaffold(
       appBar: AppBar(

@@ -21,19 +21,19 @@ class _CadastroEventoScreenState extends State<CadastroEventoScreen> {
   final storage = FirebaseStorage.instance;
 
   List<String> _sexo = ['Masculino', 'Feminino', 'Unissex'];
-  List<String> _estacionamento = ['Sim', 'Não'];
-  List<String> _pago = ['Sim', 'Não'];
+  //List<String> _estacionamento = ['Sim', 'Não'];
+  //List<String> _pago = ['Sim', 'Não'];
 
   var _horaController = new MaskedTextController(text: 'HH:mm',mask: '00:00');
   var _dataController = new MaskedTextController(text: '',mask: '00/00/0000');
 
   bool _isLoading = false;
-  double _progress;
+  //double _progress;
   
   String _estacionamentoSelect = 'n';
   String _pagoSelect = 'n';
 
-  String _idSave;
+  //String _idSave;
 
   File _imagem;
   String _nome;
@@ -43,8 +43,8 @@ class _CadastroEventoScreenState extends State<CadastroEventoScreen> {
   String _hora;
   String _sexoSelecionado;
   String _esporte;
-  String _pagoSelecionado;
-  String _estacionamentoSelecionado;
+  //String _pagoSelecionado;
+  //String _estacionamentoSelecionado;
   String _dataEvento;
 
   bool _esportSearch = false;
@@ -98,33 +98,33 @@ class _CadastroEventoScreenState extends State<CadastroEventoScreen> {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       _isLoading = true;
-      DocumentReference ref = await db.collection('eventos')
-                              .add({'imagem': await _pickSaveImage(),'nome': '$_nome',
-                                    'descricao': '$_descricao','hora': '$_hora',
-                                    'sexo': _sexoSelecionado == "Masculino" ? 'H' : _sexoSelecionado == "Feminino" ? 'M' : 'U', 
-                                    'pago':'$_pagoSelect', 'estacionamento':'$_estacionamentoSelect',
-                                    'data':'$_dataEvento', 'minParticipantes':'$_minParticipantes',
-                                    'maxParticipantes':'$_maxParticipantes', 'esporte':'$_esporte',
-                                    'dataCadastro': FieldValue.serverTimestamp()
-                             }).then(
-                                (_) { 
-                                  _idSave = _.documentID;
-                                  print(_.documentID);
-                                  setState(() { _isLoading = false;}); 
-                                  Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                      builder: (context) => HomeScreen()
-                                    )
-                                  );                             
-                              }).catchError((e){
-                                _scaffoldKey.currentState.showSnackBar(
-                                  SnackBar(content: Text("Falha ao criar evento!"),
-                                    backgroundColor: Colors.red,
-                                    duration: Duration(seconds: 3)
-                                  )
-                                );
-                                _isLoading = false;
-                              });
+      await db.collection('eventos')
+        .add({'imagem': await _pickSaveImage(),'nome': '$_nome',
+              'descricao': '$_descricao','hora': '$_hora',
+              'sexo': _sexoSelecionado == "Masculino" ? 'H' : _sexoSelecionado == "Feminino" ? 'M' : 'U', 
+              'pago':'$_pagoSelect', 'estacionamento':'$_estacionamentoSelect',
+              'data':'$_dataEvento', 'minParticipantes':'$_minParticipantes',
+              'maxParticipantes':'$_maxParticipantes', 'esporte':'$_esporte',
+              'dataCadastro': FieldValue.serverTimestamp()
+        }).then(
+          (_) { 
+            //_idSave = _.documentID;
+            print(_.documentID);
+            setState(() { _isLoading = false;}); 
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => HomeScreen()
+              )
+            );                             
+        }).catchError((e){
+          _scaffoldKey.currentState.showSnackBar(
+            SnackBar(content: Text("Falha ao criar evento!"),
+              backgroundColor: Colors.red,
+              duration: Duration(seconds: 3)
+            )
+          );
+          _isLoading = false;
+        });
 
     }
   }
@@ -133,9 +133,9 @@ class _CadastroEventoScreenState extends State<CadastroEventoScreen> {
     StorageReference ref = storage.ref().child(DateTime.now().millisecondsSinceEpoch.toString());
     StorageUploadTask uploadTask = ref.putFile(_imagem);
     uploadTask.events.listen((event) {
-          setState(() {
-            _progress = event.snapshot.bytesTransferred.toDouble() / event.snapshot.totalByteCount.toDouble();
-          });
+          // setState(() {
+          //   _progress = event.snapshot.bytesTransferred.toDouble() / event.snapshot.totalByteCount.toDouble();
+          // });
         }).onError((error) {
           setState(() {
             _isLoading = false;

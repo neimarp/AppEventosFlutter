@@ -25,9 +25,9 @@ class _CadastroUsuarioScreenState extends State<CadastroUsuarioScreen> {
   var _celularController = new MaskedTextController(text: '',mask: '(00) 00000-0000');
 
   bool _isLoading = false;
-  double _progress;
+  //double _progress;
 
-  String _idSave;
+  //String _idSave;
 
   File _imagem;
   String _nome;
@@ -39,28 +39,31 @@ class _CadastroUsuarioScreenState extends State<CadastroUsuarioScreen> {
   
   void createData() async {
     if (_formKey.currentState.validate()) {
+
       _formKey.currentState.save();
+
       _isLoading = true;
-      DocumentReference ref = await db.collection('usuarios')
-                              .add({'imagem': await _pickSaveImage(),'nome': '$_nome',
-                                    'celular': '$_celular','email': '$_email',
-                                    'cpf': '$_cpf','sexo': _sexoSelecionado == "Masculino" ? 'H' : 'M', 
-                                    'dtNascimento':'$_dataNascimento'})
-                              .then(
-                                (_) { 
-                                  _idSave = _.documentID;
-                                  print(_.documentID);
-                                  setState(() { _isLoading = false;}); 
-                                })
-                              .catchError((e){
-                                _scaffoldKey.currentState.showSnackBar(
-                                  SnackBar(content: Text("Falha ao criar usuário!"),
-                                    backgroundColor: Colors.red,
-                                    duration: Duration(seconds: 3)
-                                  )
-                                );
-                                _isLoading = false;
-                              });
+      
+      await db.collection('usuarios')
+        .add({'imagem': await _pickSaveImage(),'nome': '$_nome',
+              'celular': '$_celular','email': '$_email',
+              'cpf': '$_cpf','sexo': _sexoSelecionado == "Masculino" ? 'H' : 'M', 
+              'dtNascimento':'$_dataNascimento'})
+        .then(
+          (_) { 
+            //_idSave = _.documentID;
+            //print(_.documentID);
+            setState(() { _isLoading = false;}); 
+          })
+        .catchError((e){
+          _scaffoldKey.currentState.showSnackBar(
+            SnackBar(content: Text("Falha ao criar usuário!"),
+              backgroundColor: Colors.red,
+              duration: Duration(seconds: 3)
+            )
+          );
+          _isLoading = false;
+        });
 
     }
   }
@@ -70,7 +73,7 @@ class _CadastroUsuarioScreenState extends State<CadastroUsuarioScreen> {
     StorageUploadTask uploadTask = ref.putFile(_imagem);
     uploadTask.events.listen((event) {
           setState(() {
-            _progress = event.snapshot.bytesTransferred.toDouble() / event.snapshot.totalByteCount.toDouble();
+            //_progress = event.snapshot.bytesTransferred.toDouble() / event.snapshot.totalByteCount.toDouble();
           });
         }).onError((error) {
           setState(() {
